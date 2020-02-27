@@ -1,5 +1,8 @@
+-- psql -U dunder_mifflin -d relentless -f ./seeds/seed.relentless_goals.sql
 -- first remove any data that may be present
 TRUNCATE  annual_goals, monthly_goals, weekly_goals RESTART IDENTITY CASCADE;
+
+-- used the datepart function for getting month number or week number
 
 -- insert some annual goals
 INSERT INTO annual_goals (content, complete, goal_category)
