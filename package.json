@@ -9,7 +9,7 @@
     "migrate": "postgrator --config postgrator-config.js",
     "start": "node src/server.js",
     "predeploy": "npm audit",
-    "deply": "git push heroku master"
+    "deploy": "git push heroku master"
   },
   "keywords": [],
   "engines":{
