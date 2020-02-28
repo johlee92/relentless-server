@@ -12,6 +12,9 @@
     "deply": "git push heroku master"
   },
   "keywords": [],
+  "engines":{
+    "node": "10.17.0"
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
