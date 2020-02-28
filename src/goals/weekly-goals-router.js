@@ -10,7 +10,8 @@ const serializeGoal = goal => ({
     id: goal.id,
     content: xss(goal.content),
     date_created: goal.date_created,
-    category: goal.goal_category
+    complete: goal.complete,
+    user_id: goal.user_id
   })
   
   weeklyGoalsRouter
