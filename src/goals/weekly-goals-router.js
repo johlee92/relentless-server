@@ -80,14 +80,14 @@ const serializeGoal = goal => ({
         .catch(next)
     })
     .patch(jsonParser, (req, res, next) => {
-      const { content, goal_category } = req.body
-      const goalToUpdate = { content, goal_category }
+      const { content, complete } = req.body
+      const goalToUpdate = { content, complete }
   
       const numberOfValues = Object.values(goalToUpdate).filter(Boolean).length
       if (numberOfValues === 0)
         return res.status(400).json({
           error: {
-            message: `Request body must content either 'content' or 'category'`
+            message: `Request body must contain either 'content' or 'complete'`
           }
         })
   

@@ -80,8 +80,8 @@ const serializeGoal = goal => ({
         .catch(next)
     })
     .patch(jsonParser, (req, res, next) => {
-      const { content, goal_category } = req.body
-      const goalToUpdate = { content, goal_category }
+      const { content, complete } = req.body
+      const goalToUpdate = { content, complete }
   
       const numberOfValues = Object.values(goalToUpdate).filter(Boolean).length
       if (numberOfValues === 0)
