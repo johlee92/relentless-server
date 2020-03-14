@@ -4,3 +4,15 @@
 {"message":"Empty .update() call detected! Update data does not contain any values to update. This will result in a faulty query. Table: weekly_goals. Columns: content,complete.","level":"error"}
 {"message":"insert into \"weekly_goals\" (\"content\") values ($1) returning * - null value in column \"monthly_goal\" violates not-null constraint","level":"error"}
 {"message":"Unexpected token t in JSON at position 0","level":"error"}
+{"message":"insert into \"weekly_goals\" (\"content\") values ($1) returning * - null value in column \"monthly_goal\" violates not-null constraint","level":"error"}
+{"message":"insert into \"weekly_goals\" (\"content\") values ($1) returning * - null value in column \"monthly_goal\" violates not-null constraint","level":"error"}
+{"message":"insert into \"weekly_goals\" (\"content\") values ($1) returning * - null value in column \"monthly_goal\" violates not-null constraint","level":"error"}
+{"message":"insert into \"weekly_goals\" (\"content\") values ($1) returning * - null value in column \"monthly_goal\" violates not-null constraint","level":"error"}
+{"message":"insert into \"weekly_goals\" (\"content\") values ($1) returning * - null value in column \"monthly_goal\" violates not-null constraint","level":"error"}
+{"message":"insert into \"weekly_goals\" (\"content\") values ($1) returning * - null value in column \"monthly_goal\" violates not-null constraint","level":"error"}
+{"message":"insert into \"monthly_goals\" (\"content\") values ($1) returning * - null value in column \"annual_goal\" violates not-null constraint","level":"error"}
+{"message":"insert into \"monthly_goals\" (\"content\") values ($1) returning * - null value in column \"annual_goal\" violates not-null constraint","level":"error"}
+{"message":"insert into \"monthly_goals\" (\"content\") values ($1) returning * - null value in column \"annual_goal\" violates not-null constraint","level":"error"}
+{"message":"insert into \"monthly_goals\" (\"content\") values ($1) returning * - null value in column \"annual_goal\" violates not-null constraint","level":"error"}
+{"message":"insert into \"monthly_goals\" (\"content\") values ($1) returning * - null value in column \"annual_goal\" violates not-null constraint","level":"error"}
+{"message":"insert into \"monthly_goals\" (\"content\") values ($1) returning * - null value in column \"annual_goal\" violates not-null constraint","level":"error"}

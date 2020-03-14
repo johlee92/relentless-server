@@ -25,8 +25,8 @@ const serializeGoal = goal => ({
         .catch(next)
     })
     .post(jsonParser, (req, res, next) => {
-      const { content } = req.body
-      const newGoal = { content }
+      const { content, monthly_goal } = req.body
+      const newGoal = { content, monthly_goal }
   
       for (const [key, value] of Object.entries(newGoal))
         if (value == null)
