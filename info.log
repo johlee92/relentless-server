@@ -16,3 +16,13 @@
 {"message":"insert into \"monthly_goals\" (\"content\") values ($1) returning * - null value in column \"annual_goal\" violates not-null constraint","level":"error"}
 {"message":"insert into \"monthly_goals\" (\"content\") values ($1) returning * - null value in column \"annual_goal\" violates not-null constraint","level":"error"}
 {"message":"insert into \"monthly_goals\" (\"content\") values ($1) returning * - null value in column \"annual_goal\" violates not-null constraint","level":"error"}
+{"message":"connect ECONNREFUSED 127.0.0.1:5432","level":"error"}
+{"message":"connect ECONNREFUSED 127.0.0.1:5432","level":"error"}
+{"message":"connect ECONNREFUSED 127.0.0.1:5432","level":"error"}
+{"message":"connect ECONNREFUSED 127.0.0.1:5432","level":"error"}
+{"message":"connect ECONNREFUSED 127.0.0.1:5432","level":"error"}
+{"message":"connect ECONNREFUSED 127.0.0.1:5432","level":"error"}
+{"message":"connect ECONNREFUSED 127.0.0.1:5432","level":"error"}
+{"message":"connect ECONNREFUSED 127.0.0.1:5432","level":"error"}
+{"message":"connect ECONNREFUSED 127.0.0.1:5432","level":"error"}
+{"message":"connect ECONNREFUSED 127.0.0.1:5432","level":"error"}
