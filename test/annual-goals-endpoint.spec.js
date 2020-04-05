@@ -39,55 +39,51 @@ describe('Annual Goals Endpoints', function() {
       })
     })
 
-    // context('Given there are articles in the database', () => {
-    //   beforeEach('insert articles', () =>
-    //     helpers.seedArticlesTables(
-    //       db,
-    //       testUsers,
-    //       testArticles,
-    //       testComments,
-    //     )
-    //   )
+    context('Given there are goals in the database', () => {
+      beforeEach('insert goals', () =>
+        helpers.seedGoalsTables(
+          db,
+          view,
+          testAnnualGoals,
+        )
+      )
 
-    //   it('responds with 200 and all of the articles', () => {
-    //     const expectedArticles = testArticles.map(article =>
-    //       helpers.makeExpectedArticle(
-    //         testUsers,
-    //         article,
-    //         testComments,
-    //       )
-    //     )
-    //     return supertest(app)
-    //       .get('/api/articles')
-    //       .expect(200, expectedArticles)
-    //   })
-    // })
+      it('responds with 200 and all of the articles', () => {
+        const expectedGoals = testAnnualGoals.map(goal =>
+          helpers.makeExpectedGoal(
+            view,
+            goal,
+          )
+        )
+        return supertest(app)
+          .get('/api/annualGoals')
+          .expect(200, expectedGoals)
+      })
+    })
 
-    // context(`Given an XSS attack article`, () => {
-    //   const testUser = helpers.makeUsersArray()[1]
-    //   const {
-    //     maliciousArticle,
-    //     expectedArticle,
-    //   } = helpers.makeMaliciousArticle(testUser)
+    context(`Given an XSS attack goal`, () => {
+      const {
+        maliciousGoal,
+        expectedGoal,
+      } = helpers.makeMaliciousGoal(view)
 
-    //   beforeEach('insert malicious article', () => {
-    //     return helpers.seedMaliciousArticle(
-    //       db,
-    //       testUser,
-    //       maliciousArticle,
-    //     )
-    //   })
+      beforeEach('insert malicious goal', () => {
+        return helpers.seedMaliciousGoal(
+          db,
+          view,
+          maliciousGoal,
+        )
+      })
 
-    //   it('removes XSS attack content', () => {
-    //     return supertest(app)
-    //       .get(`/api/articles`)
-    //       .expect(200)
-    //       .expect(res => {
-    //         expect(res.body[0].title).to.eql(expectedArticle.title)
-    //         expect(res.body[0].content).to.eql(expectedArticle.content)
-    //       })
-    //   })
-    // })
+      it('removes XSS attack content', () => {
+        return supertest(app)
+          .get(`/api/annualGoals`)
+          .expect(200)
+          .expect(res => {
+            expect(res.body[0].content).to.eql(expectedGoal.content)
+          })
+      })
+    })
   })
 
 //   describe(`GET /api/articles/:article_id`, () => {
@@ -107,7 +103,7 @@ describe('Annual Goals Endpoints', function() {
 
 //     context('Given there are articles in the database', () => {
 //       beforeEach('insert articles', () =>
-//         helpers.seedArticlesTables(
+//         helpers.seedGoalsTables(
 //           db,
 //           testUsers,
 //           testArticles,
@@ -117,7 +113,7 @@ describe('Annual Goals Endpoints', function() {
 
 //       it('responds with 200 and the specified article', () => {
 //         const articleId = 2
-//         const expectedArticle = helpers.makeExpectedArticle(
+//         const expectedArticle = helpers.makeExpectedGoal(
 //           testUsers,
 //           testArticles[articleId - 1],
 //           testComments,
@@ -175,7 +171,7 @@ describe('Annual Goals Endpoints', function() {
 
 //     context('Given there are comments for article in the database', () => {
 //       beforeEach('insert articles', () =>
-//         helpers.seedArticlesTables(
+//         helpers.seedGoalsTables(
 //           db,
 //           testUsers,
 //           testArticles,
@@ -185,7 +181,7 @@ describe('Annual Goals Endpoints', function() {
 
 //       it('responds with 200 and the specified comments', () => {
 //         const articleId = 1
-//         const expectedComments = helpers.makeExpectedArticleComments(
+//         const expectedComments = helpers.makeExpectedGoalComments(
 //           testUsers, articleId, testComments
 //         )
 

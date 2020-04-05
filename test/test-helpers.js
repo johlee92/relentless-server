@@ -171,8 +171,9 @@ function makeExpectedGoal(view, goal) {
             id: goal.id,
             content: goal.content,
             complete: goal.complete,
-            goal_category: goal.goal_category,
+            category: goal.goal_category,
             date_created: goal.date_created.toISOString(),
+            user_id: null
         }
     } else if (view.toLowerCase() === 'monthly') {
         return {
@@ -181,6 +182,7 @@ function makeExpectedGoal(view, goal) {
             complete: goal.complete,
             annual_goal: goal.annual_goal,
             date_created: goal.date_created.toISOString(),
+            user_id: null
         }
     } else if (view.toLowerCase() === 'weekly') {
         return {
@@ -189,6 +191,7 @@ function makeExpectedGoal(view, goal) {
             complete: goal.complete,
             monthly_goal: goal.monthly_goal,
             date_created: goal.date_created.toISOString(),
+            user_id: null
         }
     }
 }
@@ -225,13 +228,13 @@ function makeMaliciousGoal(view) {
     }
 
     const expectedGoal = {
-        ...makeExpectedGoal(view, maliciousArticle),
+        ...makeExpectedGoal(view, maliciousGoal),
         content: `Bad image <img src="https://url.to.file.which/does-not.exist">. But not <strong>all</strong> bad.`,
     }
 
     return {
-        maliciousArticle,
-        expectedArticle,
+        maliciousGoal,
+        expectedGoal,
     }
 }
 
@@ -268,41 +271,60 @@ function cleanTables(db) {
 
 function seedGoalsTables(db, view, goals) {
     
-    // use a transaction to group the queries and auto rollback on any failure
-    return db.transaction(async trx => {
-        await trx.into('annual_goals').insert(goals)
-        // update the auto sequence to match the forced id values
-        await Promise.all([
-            trx.raw(
-                `SELECT setval('annual_goals_id_seq', ?)`,
-                [goals[goals.length - 1].id],
-            ),
-        ])
-        // only insert comments if there are some, also update the sequence counter
-        if (comments.length) {
-        await trx.into('blogful_comments').insert(comments)
-        await trx.raw(
-            `SELECT setval('blogful_comments_id_seq', ?)`,
-            [comments[comments.length - 1].id],
-        )
-        }
-    })
+    if (view.toLowerCase() === 'annual') {
+        // use a transaction to group the queries and auto rollback on any failure
+        return db.transaction(async trx => {
+            await trx.into('annual_goals').insert(goals)
+            // update the auto sequence to match the forced id values
+            // await Promise.all([
+            //     trx.raw(
+            //         `SELECT setval('annual_goals_id_seq', ?)`,
+            //         [goals[goals.length - 1].id],
+            //     ),
+            // ])
+        })
+    } else if (view.toLowerCase() === 'monthly') {
+        // use a transaction to group the queries and auto rollback on any failure
+        return db.transaction(async trx => {
+            await trx.into('monthly_goals').insert(goals)
+            // update the auto sequence to match the forced id values
+            // await Promise.all([
+            //     trx.raw(
+            //         `SELECT setval('monthly_goals_id_seq', ?)`,
+            //         [goals[goals.length - 1].id],
+            //     ),
+            // ])
+        })
+    } else if (view.toLowerCase() === 'weekly') {
+        // use a transaction to group the queries and auto rollback on any failure
+        return db.transaction(async trx => {
+            await trx.into('weekly_goals').insert(goals)
+            // update the auto sequence to match the forced id values
+            // await Promise.all([
+            //     trx.raw(
+            //         `SELECT setval('weekly_goals_id_seq', ?)`,
+            //         [goals[goals.length - 1].id],
+            //     ),
+            // ])
+        })
+    }
+    
 }
 
 //seeds the macilious goal for testing into database
-function seedMaliciousGoal(db, view, article) {
+function seedMaliciousGoal(db, view, goal) {
     if (view.toLowerCase() === 'annual') {
         return db
             .into('annual_goals')
-            .insert([article])
+            .insert([goal])
     } else if (view.toLowerCase() === 'monthly') {
         return db
             .into('monthly_goals')
-            .insert([article])
+            .insert([goal])
     } else if (view.toLowerCase() === 'weekly') {
         return db
             .into('weekly_goals')
-            .insert([article])
+            .insert([goal])
     }
 }
 
