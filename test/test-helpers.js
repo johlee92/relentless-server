@@ -182,7 +182,6 @@ function makeExpectedGoal(view, goal) {
             complete: goal.complete,
             annual_goal: goal.annual_goal,
             date_created: goal.date_created.toISOString(),
-            user_id: null
         }
     } else if (view.toLowerCase() === 'weekly') {
         return {
@@ -191,7 +190,6 @@ function makeExpectedGoal(view, goal) {
             complete: goal.complete,
             monthly_goal: goal.monthly_goal,
             date_created: goal.date_created.toISOString(),
-            user_id: null
         }
     }
 }
@@ -213,7 +211,7 @@ function makeMaliciousGoal(view) {
         maliciousGoal = {
             id: 911,
             content: `Bad image <img src="https://url.to.file.which/does-not.exist" onerror="alert(document.cookie);">. But not <strong>all</strong> bad.`,
-            annual_goal: 1,
+            annual_goal: 2,
             complete: false,
             date_created: new Date('2020-02-17T00:00:00.000Z'),
         }
@@ -251,9 +249,10 @@ function cleanTables(db) {
     return db.transaction(trx =>
         trx.raw(
         `TRUNCATE
-            weekly_goals,
+            annual_goals,
             monthly_goals,
-            annual_goals
+            weekly_goals
+            RESTART IDENTITY CASCADE;
         `
         )
         .then(() =>
@@ -261,6 +260,10 @@ function cleanTables(db) {
             trx.raw(`ALTER SEQUENCE weekly_goals_id_seq minvalue 0 START WITH 1`),
             trx.raw(`ALTER SEQUENCE monthly_goals_id_seq minvalue 0 START WITH 1`),
             trx.raw(`ALTER SEQUENCE annual_goals_id_seq minvalue 0 START WITH 1`),
+            // trx.raw('ALTER TABLE monthly_goals DROP CONSTRAINT monthly_goals_annual_goal_fkey'),
+            // trx.raw('ALTER TABLE monthly_goals ADD CONSTRAINT monthly_goals_annual_goal FOREIGN KEY(id) REFERENCES annual_goals(id) ON DELETE CASCADE'),
+            // trx.raw('ALTER TABLE weekly_goals DROP CONSTRAINT weekly_goals_monthly_goal_fkey'),
+            // trx.raw('ALTER TABLE weekly_goals ADD CONSTRAINT weekly_goals_monthly_goal FOREIGN KEY(id) REFERENCES monthly_goals(id) ON DELETE CASCADE'),
             trx.raw(`SELECT setval('weekly_goals_id_seq', 0)`),
             trx.raw(`SELECT setval('monthly_goals_id_seq', 0)`),
             trx.raw(`SELECT setval('annual_goals_id_seq', 0)`),

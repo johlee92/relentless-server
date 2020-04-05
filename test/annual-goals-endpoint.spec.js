@@ -30,7 +30,7 @@ describe('Annual Goals Endpoints', function() {
 
   afterEach('cleanup', () => helpers.cleanTables(db))
 
-  describe.only(`GET /api/annualGoals`, () => {
+  describe(`GET /api/annualGoals`, () => {
     context(`Given no articles`, () => {
       it(`responds with 200 and an empty list`, () => {
         return supertest(app)
@@ -86,110 +86,62 @@ describe('Annual Goals Endpoints', function() {
     })
   })
 
-//   describe(`GET /api/articles/:article_id`, () => {
-//     context(`Given no articles`, () => {
-//       beforeEach(() =>
-//         db.into('blogful_users').insert(testUsers)
-//       )
+  describe(`GET /api/annualGoals/:goal_id`, () => {
+    context(`Given no goals`, () => {
 
-//       it(`responds with 404`, () => {
-//         const articleId = 123456
-//         return supertest(app)
-//           .get(`/api/articles/${articleId}`)
-//           .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
-//           .expect(404, { error: `Article doesn't exist` })
-//       })
-//     })
+      it(`responds with 404`, () => {
+        const goalId = 123456789
+        return supertest(app)
+          .get(`/api/annualGoals/${goalId}`)
+          .expect(404, { error: { message: `Goal doesn't exist` } })
+      })
+    })
 
-//     context('Given there are articles in the database', () => {
-//       beforeEach('insert articles', () =>
-//         helpers.seedGoalsTables(
-//           db,
-//           testUsers,
-//           testArticles,
-//           testComments,
-//         )
-//       )
+    context('Given there are articles in the database', () => {
+      beforeEach('insert goals', () =>
+        helpers.seedGoalsTables(
+          db,
+          view,
+          testAnnualGoals,
+        )
+      )
 
-//       it('responds with 200 and the specified article', () => {
-//         const articleId = 2
-//         const expectedArticle = helpers.makeExpectedGoal(
-//           testUsers,
-//           testArticles[articleId - 1],
-//           testComments,
-//         )
+      it('responds with 200 and the specified article', () => {
+        const goalId = 2
+        const expectedGoal = helpers.makeExpectedGoal(
+          view,
+          testAnnualGoals[goalId - 1],
+        )
 
-//         return supertest(app)
-//           .get(`/api/articles/${articleId}`)
-//           .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
-//           .expect(200, expectedArticle)
-//       })
-//     })
+        return supertest(app)
+          .get(`/api/annualGoals/${goalId}`)
+          .expect(200, expectedGoal)
+      })
+    })
 
-//     context(`Given an XSS attack article`, () => {
-//       const testUser = helpers.makeUsersArray()[1]
-//       const {
-//         maliciousArticle,
-//         expectedArticle,
-//       } = helpers.makeMaliciousArticle(testUser)
+    context(`Given an XSS attack article`, () => {
+      const {
+        maliciousGoal,
+        expectedGoal,
+      } = helpers.makeMaliciousGoal(view)
 
-//       beforeEach('insert malicious article', () => {
-//         return helpers.seedMaliciousArticle(
-//           db,
-//           testUser,
-//           maliciousArticle,
-//         )
-//       })
+      beforeEach('insert malicious goal', () => {
+        return helpers.seedMaliciousGoal(
+          db,
+          view,
+          maliciousGoal,
+        )
+      })
 
-//       it('removes XSS attack content', () => {
-//         return supertest(app)
-//           .get(`/api/articles/${maliciousArticle.id}`)
-//           .set('Authorization', helpers.makeAuthHeader(testUser))
-//           .expect(200)
-//           .expect(res => {
-//             expect(res.body.title).to.eql(expectedArticle.title)
-//             expect(res.body.content).to.eql(expectedArticle.content)
-//           })
-//       })
-//     })
-//   })
+      it('removes XSS attack content', () => {
+        return supertest(app)
+          .get(`/api/annualGoals/${maliciousGoal.id}`)
+          .expect(200)
+          .expect(res => {
+            expect(res.body.content).to.eql(expectedGoal.content)
+          })
+      })
+    })
+  })
 
-//   describe(`GET /api/articles/:article_id/comments`, () => {
-//     context(`Given no articles`, () => {
-//       beforeEach(() =>
-//         db.into('blogful_users').insert(testUsers)
-//       )
-
-//       it(`responds with 404`, () => {
-//         const articleId = 123456
-//         return supertest(app)
-//           .get(`/api/articles/${articleId}/comments`)
-//           .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
-//           .expect(404, { error: `Article doesn't exist` })
-//       })
-//     })
-
-//     context('Given there are comments for article in the database', () => {
-//       beforeEach('insert articles', () =>
-//         helpers.seedGoalsTables(
-//           db,
-//           testUsers,
-//           testArticles,
-//           testComments,
-//         )
-//       )
-
-//       it('responds with 200 and the specified comments', () => {
-//         const articleId = 1
-//         const expectedComments = helpers.makeExpectedGoalComments(
-//           testUsers, articleId, testComments
-//         )
-
-//         return supertest(app)
-//           .get(`/api/articles/${articleId}/comments`)
-//           .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
-//           .expect(200, expectedComments)
-//       })
-//     })
-//   })
 })
