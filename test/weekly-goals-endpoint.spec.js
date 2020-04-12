@@ -31,7 +31,7 @@ describe('Weekly Goals Endpoints', function() {
     afterEach('cleanup', () => helpers.cleanTables(db))
 
     describe(`GET /api/weeklyGoals`, () => {
-        context(`Given no articles`, () => {
+        context(`Given no goals`, () => {
             it(`responds with 200 and an empty list`, () => {
                 return supertest(app)
                 .get('/api/weeklyGoals')
@@ -40,25 +40,31 @@ describe('Weekly Goals Endpoints', function() {
         })
 
         context('Given there are goals in the database', () => {
-            beforeEach('insert goals', () => {
-                helpers.seedGoalsTables(
+            beforeEach('insert annual goals', () => {
+                return helpers.seedGoalsTables(
                     db,
                     'annual',
                     testAnnualGoals,
                 )
-                helpers.seedGoalsTables(
+            })
+
+            beforeEach('insert monthly goals', () => {
+                return helpers.seedGoalsTables(
                     db,
                     'monthly',
                     testMonthlyGoals,
                 )
-                helpers.seedGoalsTables(
+            })
+
+            beforeEach('insert weekly goals', () => {
+                return helpers.seedGoalsTables(
                     db,
                     'weekly',
                     testWeeklyGoals,
                 )
             })
 
-            it('responds with 200 and all of the articles', () => {
+            it('responds with 200 and all of the goals', () => {
                 const expectedGoals = testWeeklyGoals.map(goal =>
                     helpers.makeExpectedGoal(
                         view,
@@ -72,47 +78,53 @@ describe('Weekly Goals Endpoints', function() {
             })
         })
 
-        // context(`Given an XSS attack goal`, () => {
-        //     const {
-        //         maliciousGoal,
-        //         expectedGoal,
-        //     } = helpers.makeMaliciousGoal(view)
-            
-        //     beforeEach('insert goals', () => {
-        //         helpers.seedGoalsTables(
-        //             db,
-        //             'annual',
-        //             testAnnualGoals,
-        //         )
-        //         helpers.seedGoalsTables(
-        //             db,
-        //             'monthly',
-        //             testMonthlyGoals,
-        //         )
-        //         helpers.seedGoalsTables(
-        //             db,
-        //             'weekly',
-        //             testWeeklyGoals,
-        //         )
-        //     })
+        context(`Given an XSS attack goal`, () => {
+            const {
+                maliciousGoal,
+                expectedGoal,
+            } = helpers.makeMaliciousGoal(view)
 
-        //     beforeEach('insert malicious goal', () => {
-        //         return helpers.seedMaliciousGoal(
-        //             db,
-        //             view,
-        //             maliciousGoal,
-        //         )
-        //     })
+            beforeEach('insert annual goals', () => {
+                return helpers.seedGoalsTables(
+                    db,
+                    'annual',
+                    testAnnualGoals,
+                )
+            })
 
-        //     it('removes XSS attack content', () => {
-        //         return supertest(app)
-        //             .get(`/api/weeklyGoals`)
-        //             .expect(200)
-        //             .expect(res => {
-        //                 expect(res.body[res.body.length-1].content).to.eql(expectedGoal.content)
-        //         })
-        //     })
-        // })
+            beforeEach('insert monthly goals', () => {
+                return helpers.seedGoalsTables(
+                    db,
+                    'monthly',
+                    testMonthlyGoals,
+                )
+            })
+
+            beforeEach('insert weekly goals', () => {
+                return helpers.seedGoalsTables(
+                    db,
+                    'weekly',
+                    testWeeklyGoals,
+                )
+            })
+
+            beforeEach('insert malicious goal', () => {
+                return helpers.seedMaliciousGoal(
+                    db,
+                    view,
+                    maliciousGoal,
+                )
+            })
+
+            it('removes XSS attack content', () => {
+                return supertest(app)
+                    .get(`/api/weeklyGoals`)
+                    .expect(200)
+                    .expect(res => {
+                        expect(res.body[res.body.length-1].content).to.eql(expectedGoal.content)
+                })
+            })
+        })
     })
 
     describe(`GET /api/weeklyGoals/:goal_id`, () => {
@@ -126,61 +138,91 @@ describe('Weekly Goals Endpoints', function() {
             })
         })
 
-        // context('Given there are articles in the database', () => {
-        //     beforeEach('insert goals', () => {
-        //         helpers.seedGoalsTables(
-        //             db,
-        //             'annual',
-        //             testAnnualGoals,
-        //         )
-        //         helpers.seedGoalsTables(
-        //             db,
-        //             'monthly',
-        //             testMonthlyGoals,
-        //         )
-        //         helpers.seedGoalsTables(
-        //             db,
-        //             'weekly',
-        //             testWeeklyGoals,
-        //         )
-        //     })
+        context('Given there are goals in the database', () => {
+            beforeEach('insert annual goals', () => {
+                return helpers.seedGoalsTables(
+                    db,
+                    'annual',
+                    testAnnualGoals,
+                )
+            })
 
-        //     it('responds with 200 and the specified article', () => {
-        //         const goalId = 2
-        //         const expectedGoal = helpers.makeExpectedGoal(
-        //             view,
-        //             testWeeklyGoals[goalId - 1],
-        //         )
+            beforeEach('insert monthly goals', () => {
+                return helpers.seedGoalsTables(
+                    db,
+                    'monthly',
+                    testMonthlyGoals,
+                )
+            })
 
-        //         return supertest(app)
-        //             .get(`/api/weeklyGoals/${goalId}`)
-        //             .expect(200, expectedGoal)
-        //     })
-        // })
+            beforeEach('insert weekly goals', () => {
+                return helpers.seedGoalsTables(
+                    db,
+                    'weekly',
+                    testWeeklyGoals,
+                )
+            })
 
-        // context(`Given an XSS attack article`, () => {
-        //     const {
-        //         maliciousGoal,
-        //         expectedGoal,
-        //     } = helpers.makeMaliciousGoal(view)
+            it('responds with 200 and the specified goal', () => {
+                const goalId = 2
+                const expectedGoal = helpers.makeExpectedGoal(
+                    view,
+                    testWeeklyGoals[goalId - 1],
+                )
 
-        //     beforeEach('insert malicious goal', () => {
-        //         return helpers.seedMaliciousGoal(
-        //             db,
-        //             view,
-        //             maliciousGoal,
-        //         )
-        //     })
+                return supertest(app)
+                    .get(`/api/weeklyGoals/${goalId}`)
+                    .expect(200, expectedGoal)
+            })
+        })
 
-        //     it('removes XSS attack content', () => {
-        //         return supertest(app)
-        //             .get(`/api/weeklyGoals/${maliciousGoal.id}`)
-        //             .expect(200)
-        //             .expect(res => {
-        //                 expect(res.body.content).to.eql(expectedGoal.content)
-        //         })
-        //     })
-        // })
+        context(`Given an XSS attack goal`, () => {
+            const {
+                maliciousGoal,
+                expectedGoal,
+            } = helpers.makeMaliciousGoal(view)
+
+            beforeEach('insert annual goals', () => {
+                return helpers.seedGoalsTables(
+                    db,
+                    'annual',
+                    testAnnualGoals,
+                )
+            })
+
+            beforeEach('insert monthly goals', () => {
+                return helpers.seedGoalsTables(
+                    db,
+                    'monthly',
+                    testMonthlyGoals,
+                )
+            })
+
+            beforeEach('insert weekly goals', () => {
+                return helpers.seedGoalsTables(
+                    db,
+                    'weekly',
+                    testWeeklyGoals,
+                )
+            })
+
+            beforeEach('insert malicious goal', () => {
+                return helpers.seedMaliciousGoal(
+                    db,
+                    view,
+                    maliciousGoal,
+                )
+            })
+
+            it('removes XSS attack content', () => {
+                return supertest(app)
+                    .get(`/api/weeklyGoals/${maliciousGoal.id}`)
+                    .expect(200)
+                    .expect(res => {
+                        expect(res.body.content).to.eql(expectedGoal.content)
+                })
+            })
+        })
     })
 
 })
