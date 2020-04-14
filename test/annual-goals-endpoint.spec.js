@@ -2,7 +2,7 @@ const knex = require('knex')
 const app = require('../src/app')
 const helpers = require('./test-helpers')
 
-describe.only('Annual Goals Endpoints', function() {
+describe('Annual Goals Endpoints', function() {
   let db;
 
   //get the test data from the helper
@@ -157,7 +157,7 @@ describe.only('Annual Goals Endpoints', function() {
             .expect(201)
             .expect(res => {
                 expect(res.body.content).to.eql(newAnnualGoal.content)
-                // time assertion issues due to PC
+                // test ignored due to time assertion difficulties due to computer system
                 // expect(res.body.date_created).to.eql(newAnnualGoal.date_created.toISOString())
                 expect(res.headers.location).to.eql(`/api/annualGoals/${res.body.id}`)
             })
@@ -209,7 +209,7 @@ describe.only('Annual Goals Endpoints', function() {
         )
       })
 
-      // time assertion issues in PC
+      // test ignored due to time assertion difficulties due to computer system
       // it('responds with 204 and updates the goal', () => {
       //     const idToUpdate = 1
       //     const updateGoal = {
@@ -244,7 +244,7 @@ describe.only('Annual Goals Endpoints', function() {
               })
       })
 
-      // time assertion issues in PC
+      // test ignored due to time assertion difficulties due to computer system
       // it(`responds with 204 when updating only a subset of fields`, () => {
       //   const idToUpdate = 1
       //     const updateGoal = {
@@ -278,7 +278,7 @@ describe.only('Annual Goals Endpoints', function() {
         )
       })
       
-      // time assertion issues due to PC
+      // test ignored due to time assertion difficulties due to computer system
       // it('responds with 204 and removes the goal', () => {
       //     const idToRemove = 2
       //     const expectedGoals = testAnnualGoals.filter(goal => goal.id !== idToRemove)

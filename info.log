@@ -30,3 +30,5 @@
 {"message":"connect ECONNREFUSED 127.0.0.1:5432","level":"error"}
 {"message":"connect ECONNREFUSED 127.0.0.1:5432","level":"error"}
 {"message":"AnnaulGoalsService is not defined","level":"error"}
+{"message":"insert into \"monthly_goals\" (\"annual_goal\", \"content\", \"date_created\") values ($1, $2, $3) returning * - duplicate key value violates unique constraint \"monthly_goals_pkey\"","level":"error"}
+{"message":"AnnaulGoalsService is not defined","level":"error"}

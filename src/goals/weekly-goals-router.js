@@ -71,7 +71,7 @@ const serializeGoal = goal => ({
         res.json(serializeGoal(res.goal))
     })
     .delete((req, res, next) => {
-        AnnaulGoalsService.deleteWeeklyGoal(
+      WeeklyGoalsService.deleteWeeklyGoal(
             req.app.get('db'),
             req.params.goal_id
         )
@@ -88,7 +88,7 @@ const serializeGoal = goal => ({
       if (numberOfValues === 0)
         return res.status(400).json({
           error: {
-            message: `Request body must contain either 'content' or 'complete'`
+            message: `Request body must contain fields to update`
           }
         })
   
