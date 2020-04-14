@@ -10,9 +10,9 @@ const serializeGoal = goal => ({
     id: goal.id,
     content: xss(goal.content),
     date_created: goal.date_created,
-    category: goal.goal_category,
+    goal_category: goal.goal_category,
     complete: goal.complete,
-    user_id: goal.user_id
+    // user_id: goal.user_id
   })
   
   annualGoalsRouter
@@ -71,7 +71,7 @@ const serializeGoal = goal => ({
         res.json(serializeGoal(res.goal))
     })
     .delete((req, res, next) => {
-        AnnaulGoalsService.deleteAnnualGoal(
+        AnnualGoalsService.deleteAnnualGoal(
             req.app.get('db'),
             req.params.goal_id
         )
@@ -88,7 +88,7 @@ const serializeGoal = goal => ({
       if (numberOfValues === 0)
         return res.status(400).json({
           error: {
-            message: `Request body must content either 'content' or 'category'`
+            message: `Request body must contain fields to update`
           }
         })
   

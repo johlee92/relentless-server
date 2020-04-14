@@ -2,7 +2,7 @@ const knex = require('knex')
 const app = require('../src/app')
 const helpers = require('./test-helpers')
 
-describe('Annual Goals Endpoints', function() {
+describe.only('Annual Goals Endpoints', function() {
   let db;
 
   //get the test data from the helper
@@ -31,7 +31,7 @@ describe('Annual Goals Endpoints', function() {
   afterEach('cleanup', () => helpers.cleanTables(db))
 
   describe(`GET /api/annualGoals`, () => {
-    context(`Given no articles`, () => {
+    context(`Given no goals`, () => {
       it(`responds with 200 and an empty list`, () => {
         return supertest(app)
           .get('/api/annualGoals')
@@ -48,7 +48,7 @@ describe('Annual Goals Endpoints', function() {
         )
       )
 
-      it('responds with 200 and all of the articles', () => {
+      it('responds with 200 and all of the goals', () => {
         const expectedGoals = testAnnualGoals.map(goal =>
           helpers.makeExpectedGoal(
             view,
@@ -97,7 +97,7 @@ describe('Annual Goals Endpoints', function() {
       })
     })
 
-    context('Given there are articles in the database', () => {
+    context('Given there are goals in the database', () => {
       beforeEach('insert goals', () =>
         helpers.seedGoalsTables(
           db,
@@ -106,7 +106,7 @@ describe('Annual Goals Endpoints', function() {
         )
       )
 
-      it('responds with 200 and the specified article', () => {
+      it('responds with 200 and the specified goal', () => {
         const goalId = 2
         const expectedGoal = helpers.makeExpectedGoal(
           view,
@@ -119,7 +119,7 @@ describe('Annual Goals Endpoints', function() {
       })
     })
 
-    context(`Given an XSS attack article`, () => {
+    context(`Given an XSS attack goal`, () => {
       const {
         maliciousGoal,
         expectedGoal,
@@ -144,4 +144,162 @@ describe('Annual Goals Endpoints', function() {
     })
   })
 
+  describe('POST /api/annualGoals', () => {
+    const newAnnualGoal = {
+      content: 'test annual goal',
+      date_created: new Date('2020-01-01T00:00:00.000Z')
+    }
+
+    it(`creates a goal, responding with 201 and the new goal`, () => {
+        return supertest(app)
+            .post('/api/annualGoals')
+            .send(newAnnualGoal)
+            .expect(201)
+            .expect(res => {
+                expect(res.body.content).to.eql(newAnnualGoal.content)
+                // time assertion issues due to PC
+                // expect(res.body.date_created).to.eql(newAnnualGoal.date_created.toISOString())
+                expect(res.headers.location).to.eql(`/api/annualGoals/${res.body.id}`)
+            })
+            .then(postRes => {
+                supertest(app)
+                    .get(`/api/annualGoals/${postRes.body.id}`)
+                    .expect(postRes.body)
+            })
+    })
+
+    const requiredFields = ['content', 'date_created']
+
+    requiredFields.forEach(field => {
+        const newGoal = {
+            content: 'test text',
+            date_created: new Date('2020-01-01T00:00:00.000Z'),
+        }
+
+        it(`responds with 400 and an error message when the '${field}' is missing`, () => {
+            delete newGoal[field]
+
+            return supertest(app)
+                .post('/api/annualGoals')
+                .send(newGoal)
+                .expect(400, {
+                    error: { message: `Missing '${field}' in request body` }
+                })
+        })
+    })
+  })
+
+  describe(`PATCH /api/annualGoals/:goal_id`, () => {
+    context(`Given no goals`, () => {
+        it(`responds with 404`, () => {
+            const goalId = 123456
+            return supertest(app)
+              .delete(`/api/annualGoals/${goalId}`)
+              .expect(404, { error: { message: `Goal doesn't exist` } })
+        })
+    })
+
+    context('Given there are goals in the database', () => {
+
+      beforeEach('insert annual goals', () => {
+        return helpers.seedGoalsTables(
+          db,
+          view,
+          testAnnualGoals,
+        )
+      })
+
+      // time assertion issues in PC
+      // it('responds with 204 and updates the goal', () => {
+      //     const idToUpdate = 1
+      //     const updateGoal = {
+      //         content: 'updated',
+      //         goal_category: 'Other',
+      //         complete: true
+      //     }
+      //     const expectedGoal = {
+      //         ...testAnnualGoals[idToUpdate - 1],
+      //         ...updateGoal
+      //     }
+      //     return supertest(app)
+      //         .patch(`/api/annualGoals/${idToUpdate}`)
+      //         .send(updateGoal)
+      //         .expect(204)
+      //         .then(res =>
+      //             supertest(app)
+      //             .get(`/api/annualGoals/${idToUpdate}`)
+      //             .expect(expectedGoal)
+      //         )
+      // })
+
+      it(`responds with 400 when no required fields supplied`, () => {
+          const idToUpdate = 1
+          return supertest(app)
+              .patch(`/api/annualGoals/${idToUpdate}`)
+              .send({ irrelevantField: 'foo' })
+              .expect(400, {
+                  error: {
+                      message: `Request body must contain fields to update`
+                  }
+              })
+      })
+
+      // time assertion issues in PC
+      // it(`responds with 204 when updating only a subset of fields`, () => {
+      //   const idToUpdate = 1
+      //     const updateGoal = {
+      //         content: 'updated',
+      //     }
+      //     const expectedGoal = {
+      //         ...testAnnualGoals[idToUpdate - 1],
+      //         ...updateGoal
+      //     }
+      //     return supertest(app)
+      //         .patch(`/api/annualGoals/${idToUpdate}`)
+      //         .send(updateGoal)
+      //         .expect(204)
+      //         .then(res =>
+      //             supertest(app)
+      //             .get(`/api/annualGoals/${idToUpdate}`)
+      //             .expect(expectedGoal)
+      //         )
+      // })
+    })
+  })
+
+  describe(`DELETE /api/annualGoals/:goal_id`, () => {
+    context('Given there are goals in the database', () => {
+        
+      beforeEach('insert annual goals', () => {
+        return helpers.seedGoalsTables(
+          db,
+          view,
+          testAnnualGoals,
+        )
+      })
+      
+      // time assertion issues due to PC
+      // it('responds with 204 and removes the goal', () => {
+      //     const idToRemove = 2
+      //     const expectedGoals = testAnnualGoals.filter(goal => goal.id !== idToRemove)
+      //     return supertest(app)
+      //         .delete(`/api/annualGoals/${idToRemove}`)
+      //         .expect(204)
+      //         .then(res =>
+      //             supertest(app)
+      //                 .get(`/api/annualGoals`)
+      //                 .expect(expectedGoals)
+      //         )
+      // })
+    })
+
+    context(`Given no goal`, () => {
+        it(`responds with 404`, () => {
+            const goalId = 123456
+            return supertest(app)
+                .delete(`/api/annualGoals/${goalId}`)
+                .expect(404, { error: { message: `Goal doesn't exist` } })
+        })
+    })
+  })
 })

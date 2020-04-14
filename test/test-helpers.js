@@ -171,9 +171,8 @@ function makeExpectedGoal(view, goal) {
             id: goal.id,
             content: goal.content,
             complete: goal.complete,
-            category: goal.goal_category,
+            goal_category: goal.goal_category,
             date_created: goal.date_created.toISOString(),
-            user_id: null
         }
     } else if (view.toLowerCase() === 'monthly') {
         return {
