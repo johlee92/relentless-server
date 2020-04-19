@@ -27,9 +27,10 @@ const serializeGoal = goal => ({
     })
     .post(jsonParser, (req, res, next) => {
       const { content, goal_category, date_created } = req.body
-      const newGoal = { content, date_created }
+      const newGoal = { content, goal_category, date_created }
+      const requiredFields = { content, date_created }
   
-      for (const [key, value] of Object.entries(newGoal))
+      for (const [key, value] of Object.entries(requiredFields))
         if (value == null)
           return res.status(400).json({
             error: { message: `Missing '${key}' in request body` }
